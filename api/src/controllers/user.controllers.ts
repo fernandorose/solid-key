@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { idGen } from "../utils/idGen";
 import bcrypt from "bcrypt";
 import { Server } from "socket.io";
+import jwt from "jsonwebtoken";
 
 const io = new Server();
 
@@ -118,6 +119,34 @@ export const createUser = async (req: Request, res: Response) => {
     );
     io.emit("newUser", newUser.rows[0]);
     res.status(201).json(newUser.rows[0]);
+  } catch (err) {
+    res.status(500).json({ message: (err as Error).message });
+  }
+};
+
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  try {
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (user.rows.length === 0) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.rows[0].password
+    );
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    const token = jwt.sign(
+      { id: user.rows[0].id, email: user.rows[0].email },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "3h" }
+    );
+
+    res.status(200).json({ user: user.rows[0], token: token });
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
   }

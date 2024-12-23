@@ -1,0 +1,34 @@
+CREATE TABLE users (
+  id VARCHAR(255) PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE passwords (
+  id VARCHAR(255) PRIMARY KEY,
+  user_id VARCHAR(255) NOT NULL,
+  site_name VARCHAR(100) NOT NULL,
+  site_url VARCHAR(255) NOT NULL,
+  site_username VARCHAR(100) NOT NULL,
+  site_password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE password_categories (
+  id VARCHAR(255) PRIMARY KEY,
+  user_id VARCHAR(255) NOT NULL,
+  category_name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE password_category_mapping (
+  id VARCHAR(255) PRIMARY KEY,
+  password_id VARCHAR(255) NOT NULL,
+  category_id VARCHAR(255) NOT NULL,
+  FOREIGN KEY (password_id) REFERENCES passwords(id) ON DELETE CASCADE,
+  FOREIGN KEY (category_id) REFERENCES password_categories(id) ON DELETE CASCADE
+);

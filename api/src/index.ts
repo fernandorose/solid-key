@@ -7,6 +7,7 @@ import pool from "./database/connection";
 
 import userRoutes from "./routes/user.route";
 import passwordRoutes from "./routes/password.route";
+import validateToken from "./middlewares/validateToken";
 
 const app = express();
 const server = http.createServer(app);
@@ -29,7 +30,7 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 app.use("/api", userRoutes);
-app.use("/api", passwordRoutes);
+app.use("/api", validateToken, passwordRoutes);
 
 pool.connect((err, client, release) => {
   if (err) {

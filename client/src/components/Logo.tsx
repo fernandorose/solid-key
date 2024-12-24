@@ -5,7 +5,7 @@ const Logo = () => {
     <span
       className={css`
         font-size: 3rem;
-        font-weight: 700;
+        font-weight: 800;
         color: #000;
         letter-spacing: -0.2rem;
       `}

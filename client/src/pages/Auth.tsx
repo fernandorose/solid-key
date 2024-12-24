@@ -17,20 +17,11 @@ const Auth = () => {
           height: 100vh;
         `}
       >
-        <section
+        <div
           className={css`
-            border: solid 1px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            padding-inline: 10px;
-            padding-block-start: 40px;
-            padding-block-end: 10px;
+            position: relative;
             display: flex;
-            width: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            padding-block-end: 30px;
             h1 {
               display: flex;
               font-size: 1rem;
@@ -47,57 +38,29 @@ const Auth = () => {
             }
           `}
         >
-          <div
-            className={css`
-              position: relative;
-              display: flex;
-              padding-block-end: 30px;
-            `}
-          >
-            <Logo />
-            <h1>Auth</h1>
-          </div>
-          <section
-            className={css`
-              display: flex;
-              justify-content: space-evenly;
-              border: solid 1px rgba(0, 0, 0, 0.1);
-              border-radius: 5px;
-              padding: 5px;
-              gap: 5px;
-              width: 100%;
-              div {
-                padding: 5px;
-                border-radius: 5px;
-                width: 100%;
-                text-align: center;
-              }
-            `}
-          >
-            <div
-              className={css`
-                background: radial-gradient(
-                  50% 100% at 50% 0%,
-                  #606060 0%,
-                  #000000 100%
-                );
-
-                color: #ffffff;
-              `}
-            >
-              <p>Sign in</p>
-            </div>
-            <div>
-              <p>Sign up</p>
-            </div>
-          </section>
+          <Logo />
+          <h1>Auth</h1>
+        </div>
+        <section
+          className={css`
+            border: solid 1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            display: flex;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
           <section
             className={css`
               display: flex;
               flex-direction: column;
               gap: 10px;
               width: 100%;
-              padding-block-start: 30px;
               div {
                 position: relative;
                 display: flex;
@@ -182,6 +145,26 @@ const Auth = () => {
             </div>
           </section>
         </section>
+        <div
+          className={css`
+            padding: 10px;
+          `}
+        >
+          <p
+            className={css`
+              font-size: 0.8rem;
+            `}
+          >
+            You dont have an account yet?{" "}
+            <span
+              className={css`
+                font-family: var(--mono-font);
+              `}
+            >
+              Create one here
+            </span>
+          </p>
+        </div>
       </main>
     </Layout>
   );

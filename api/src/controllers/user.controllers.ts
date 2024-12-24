@@ -131,14 +131,16 @@ export const loginUser = async (req: Request, res: Response) => {
       email,
     ]);
     if (user.rows.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
     }
     const isPasswordValid = await bcrypt.compare(
       password,
       user.rows[0].password
     );
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
     }
     const token = jwt.sign(
       { id: user.rows[0].id, email: user.rows[0].email },

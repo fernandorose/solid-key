@@ -1,13 +1,15 @@
 import express from "express";
 import * as userControllers from "../controllers/user.controllers";
+import validateToken from "../middlewares/validateToken";
 
 const router = express.Router();
 
 router
-  .get("/users/get", userControllers.getUsers)
-  .get("/users/get/:id", userControllers.getUserById)
+  .get("/users/get", validateToken, userControllers.getUsers)
+  .get("/users/get/:id", validateToken, userControllers.getUserById)
   .post("/users/create", userControllers.createUser)
-  .delete("/users/delete", userControllers.deleteAllUsers)
-  .delete("/users/delete/:id", userControllers.deleteUserById);
+  .post("/users/login", userControllers.loginUser)
+  .delete("/users/delete", validateToken, userControllers.deleteAllUsers)
+  .delete("/users/delete/:id", validateToken, userControllers.deleteUserById);
 
 export default router;

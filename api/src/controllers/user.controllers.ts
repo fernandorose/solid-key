@@ -1,5 +1,11 @@
 import pool from "../database/connection";
 import { Request, Response } from "express";
+
+interface CustomRequest extends Request {
+  user?: {
+    role?: string;
+  };
+}
 import { idGen } from "../utils/idGen";
 import bcrypt from "bcrypt";
 import { Server } from "socket.io";
@@ -14,6 +20,7 @@ export const getUsers = async (req: Request, res: Response) => {
         u.id AS user_id,
         u.name AS user_name,
         u.email AS user_email,
+        u.role AS user_role,
         pc.id AS category_id,
         pc.category_name AS category_name,
         pc.created_at AS category_created_at,
@@ -26,26 +33,21 @@ export const getUsers = async (req: Request, res: Response) => {
       FROM 
         users u
       LEFT JOIN 
-        password_categories pc
-      ON 
-        u.id = pc.user_id
+        password_categories pc ON u.id = pc.user_id
       LEFT JOIN 
-        password_category_mapping pcm
-      ON 
-        pc.id = pcm.category_id
+        password_category_mapping pcm ON pc.id = pcm.category_id
       LEFT JOIN 
-        passwords p
-      ON 
-        pcm.password_id = p.id
+        passwords p ON pcm.password_id = p.id
       ORDER BY 
         u.id, pc.id, p.id;
     `);
 
-    // Reorganizar datos en un JSON jerárquico
+    // Reorganizar los usuarios en dos categorías basadas en el rol
     const users: {
       id: string;
       name: string;
       email: string;
+      role: string;
       categories: {
         id: string;
         name: string;
@@ -61,6 +63,9 @@ export const getUsers = async (req: Request, res: Response) => {
       }[];
     }[] = [];
 
+    const adminUsers: any[] = []; // Arreglo para almacenar admins
+    const regularUsers: any[] = []; // Arreglo para almacenar usuarios regulares
+
     const userMap = new Map();
 
     for (const row of usersData.rows) {
@@ -69,6 +74,7 @@ export const getUsers = async (req: Request, res: Response) => {
           id: row.user_id,
           name: row.user_name,
           email: row.user_email,
+          role: row.user_role,
           categories: [],
         });
       }
@@ -100,22 +106,34 @@ export const getUsers = async (req: Request, res: Response) => {
       }
     }
 
-    userMap.forEach((value) => users.push(value));
+    userMap.forEach((value) => {
+      // Separar los usuarios según su rol
+      if (value.role === "admin") {
+        adminUsers.push(value);
+      } else {
+        regularUsers.push(value);
+      }
+    });
 
-    res.status(200).json({ users });
+    // Devolver los usuarios separados en dos arreglos
+    res.status(200).json({ admins: adminUsers, users: regularUsers });
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
   }
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body; // Incluye `role` en los datos del cuerpo
   const id = idGen();
   const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Valida el rol proporcionado o asigna uno por defecto
+  const userRole = role && ["user", "admin"].includes(role) ? role : "user";
+
   try {
     const newUser = await pool.query(
-      "INSERT INTO users (id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
-      [id, name, email, hashedPassword]
+      "INSERT INTO users (id, name, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [id, name, email, hashedPassword, userRole]
     );
     io.emit("newUser", newUser.rows[0]);
     res.status(201).json(newUser.rows[0]);
@@ -142,10 +160,28 @@ export const loginUser = async (req: Request, res: Response) => {
       res.status(401).json({ message: "Invalid email or password" });
       return;
     }
+
+    if (user.rows[0].role === "admin") {
+      const adminToken = jwt.sign(
+        {
+          id: user.rows[0].id,
+          email: user.rows[0].email,
+          role: user.rows[0].role,
+        },
+        process.env.JWT_SECRET_ADMIN as string,
+        { expiresIn: "3h" }
+      );
+      res.status(200).json({ user: user.rows[0], admin_token: adminToken });
+      return;
+    }
     const token = jwt.sign(
-      { id: user.rows[0].id, email: user.rows[0].email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "3h" }
+      {
+        id: user.rows[0].id,
+        email: user.rows[0].email,
+        role: user.rows[0].role,
+      },
+      process.env.JWT_SECRET_USER as string,
+      { expiresIn: "1h" }
     );
 
     res.status(200).json({ user: user.rows[0], token: token });

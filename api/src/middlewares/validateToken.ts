@@ -5,10 +5,14 @@ interface CustomRequest extends Request {
   user?: JwtPayload;
 }
 
-const validateToken = (req: Request, res: Response, next: NextFunction) => {
+// Middleware para validar el token con dos secretos
+export const validateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const authHeader = req.headers.authorization;
 
-  // Verificar si el encabezado de autorización está presente
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ message: "Access denied. No token provided." });
     return;
@@ -17,19 +21,52 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    // Verificar el token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as JwtPayload;
+    let decoded: JwtPayload | undefined;
 
-    // Agregar el usuario decodificado al objeto de la solicitud
+    // Intentar descifrar con el primer secreto
+    try {
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET_USER as string
+      ) as JwtPayload;
+    } catch (err) {
+      // Si falla, intentar con el segundo secreto
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET_ADMIN as string
+      ) as JwtPayload;
+    }
+
+    // Si no se descifró correctamente, lanzar error
+    if (!decoded) {
+      throw new Error("Invalid token");
+    }
+
+    // Agregar el usuario al objeto de la solicitud
     (req as CustomRequest).user = decoded;
-
-    next(); // Continuar al siguiente middleware o controlador
+    next();
   } catch (err) {
-    res.status(403).json({ message: "Invalid or expired token." });
+    res
+      .status(403)
+      .json({
+        message: "Invalid or expired token.",
+        error: (err as Error).message,
+      });
   }
 };
 
-export default validateToken;
+// Middleware para verificar si el usuario es admin
+export const requireAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = (req as CustomRequest).user;
+
+  if (!user || user.role !== "admin") {
+    res.status(403).json({ message: "Access denied. Admins only." });
+    return;
+  }
+
+  next(); // Continuar si es admin
+};

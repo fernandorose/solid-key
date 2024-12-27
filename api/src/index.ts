@@ -7,7 +7,7 @@ import pool from "./database/connection";
 
 import userRoutes from "./routes/user.route";
 import passwordRoutes from "./routes/password.route";
-import validateToken from "./middlewares/validateToken";
+import { validateToken } from "./middlewares/validateToken";
 
 const app = express();
 const server = http.createServer(app);

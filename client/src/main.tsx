@@ -5,6 +5,8 @@ import { createRoot } from "react-dom/client";
 import "@fontsource-variable/inter";
 // Supports weights 100-800
 import "@fontsource-variable/jetbrains-mono";
+// Supports weights 200-800
+import "@fontsource-variable/bricolage-grotesque";
 
 import "./styles/globals.css";
 import App from "./App.tsx";

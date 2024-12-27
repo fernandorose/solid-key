@@ -1,11 +1,11 @@
 import express from "express";
 import * as userControllers from "../controllers/user.controllers";
-import validateToken from "../middlewares/validateToken";
+import { validateToken, requireAdmin } from "../middlewares/validateToken";
 
 const router = express.Router();
 
 router
-  .get("/users/get", validateToken, userControllers.getUsers)
+  .get("/users/get", validateToken, requireAdmin, userControllers.getUsers)
   .get("/users/get/:id", validateToken, userControllers.getUserById)
   .post("/users/create", userControllers.createUser)
   .post("/users/login", userControllers.loginUser)

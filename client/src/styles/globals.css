@@ -1,12 +1,34 @@
 :root {
+  --font: "Inter Variable", sans-serif;
   --mono-font: "JetBrains Mono Variable", monospace;
+  --alternate-font: "Bricolage Grotesque Variable", sans-serif;
+
+  --shadow-color: 0deg 0% 62%;
+  --shadow-elevation-low: 0.5px 0.6px 0.7px hsl(var(--shadow-color) / 0.51),
+    0.7px 0.8px 0.9px -2px hsl(var(--shadow-color) / 0.38),
+    1.9px 2.2px 2.6px -4.1px hsl(var(--shadow-color) / 0.25);
+  --shadow-elevation-medium: 0.5px 0.6px 0.7px hsl(var(--shadow-color) / 0.43),
+    0.9px 1px 1.2px -1px hsl(var(--shadow-color) / 0.36),
+    1.9px 2.3px 2.7px -2px hsl(var(--shadow-color) / 0.3),
+    4.5px 5.3px 6.2px -3px hsl(var(--shadow-color) / 0.23),
+    9.4px 11px 12.9px -4.1px hsl(var(--shadow-color) / 0.17);
+  --shadow-elevation-high: 0.5px 0.6px 0.7px hsl(var(--shadow-color) / 0.4),
+    1.2px 1.4px 1.6px -0.5px hsl(var(--shadow-color) / 0.37),
+    2.1px 2.4px 2.8px -0.9px hsl(var(--shadow-color) / 0.34),
+    3.5px 4.2px 4.9px -1.3px hsl(var(--shadow-color) / 0.31),
+    5.9px 7px 8.2px -1.8px hsl(var(--shadow-color) / 0.28),
+    9.7px 11.4px 13.4px -2.3px hsl(var(--shadow-color) / 0.25),
+    15px 17.7px 20.7px -2.7px hsl(var(--shadow-color) / 0.22),
+    22.5px 26.5px 31px -3.2px hsl(var(--shadow-color) / 0.19),
+    32.3px 38px 44.5px -3.6px hsl(var(--shadow-color) / 0.15),
+    44.9px 52.9px 61.9px -4.1px hsl(var(--shadow-color) / 0.12);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter Variable", sans-serif;
+  font-family: var(--font);
 }
 input {
   font-family: inherit;

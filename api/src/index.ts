@@ -29,8 +29,8 @@ io.on("connection", (socket) => {
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
-app.use("/api", userRoutes);
-app.use("/api", validateToken, passwordRoutes);
+app.use("/api/v1", userRoutes);
+app.use("/api/v1", validateToken, passwordRoutes);
 
 pool.connect((err, client, release) => {
   if (err) {

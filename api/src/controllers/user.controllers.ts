@@ -13,8 +13,6 @@ import { idGen } from "../utils/idGen";
 import bcrypt from "bcrypt";
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
-import sendEmail from "../utils/nodemailerTransporter";
-import { keyGen } from "../utils/keyGen";
 
 const io = new Server();
 
@@ -149,49 +147,58 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).json({ message: "Email and password are required" });
+    return;
+  }
+
   try {
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
-    if (user.rows.length === 0) {
-      res.status(401).json({ message: "Invalid email or password" });
+
+    if (result.rows.length === 0) {
+      res.status(401).json({ message: "Invalid credentials" });
       return;
     }
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      user.rows[0].password
-    );
+
+    const user = result.rows[0];
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Invalid credentials" });
       return;
     }
 
-    if (user.rows[0].role === "admin") {
-      const adminToken = jwt.sign(
-        {
-          id: user.rows[0].id,
-          email: user.rows[0].email,
-          role: user.rows[0].role,
-        },
-        process.env.JWT_SECRET_ADMIN as string,
-        { expiresIn: "3h" }
-      );
-      res.status(200).json({ user: user.rows[0], admin_token: adminToken });
-      return;
-    }
-    const token = jwt.sign(
-      {
-        id: user.rows[0].id,
-        email: user.rows[0].email,
-        role: user.rows[0].role,
-      },
-      process.env.JWT_SECRET_USER as string,
-      { expiresIn: "1h" }
-    );
+    const { password: _, ...userWithoutPassword } = user; // Excluir contraseña de la respuesta
 
-    res.status(200).json({ user: user.rows[0], token: token });
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const secret =
+      user.role === "admin"
+        ? process.env.JWT_SECRET_ADMIN
+        : process.env.JWT_SECRET_USER;
+
+    const expiresIn = user.role === "admin" ? "3h" : "1h";
+
+    const token = jwt.sign(payload, secret as string, { expiresIn });
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: { user: userWithoutPassword, token },
+    });
   } catch (err) {
-    res.status(500).json({ message: (err as Error).message });
+    if (process.env.NODE_ENV === "production") {
+      res.status(500).json({ message: "Internal server error" });
+    } else {
+      res.status(500).json({ message: (err as Error).message });
+    }
   }
 };
 

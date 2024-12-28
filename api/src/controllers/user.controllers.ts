@@ -1,5 +1,8 @@
 import pool from "../database/connection";
 import { Request, Response } from "express";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 interface CustomRequest extends Request {
   user?: {
@@ -10,6 +13,8 @@ import { idGen } from "../utils/idGen";
 import bcrypt from "bcrypt";
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
+import sendEmail from "../utils/nodemailerTransporter";
+import { keyGen } from "../utils/keyGen";
 
 const io = new Server();
 
@@ -185,6 +190,21 @@ export const loginUser = async (req: Request, res: Response) => {
     );
 
     res.status(200).json({ user: user.rows[0], token: token });
+  } catch (err) {
+    res.status(500).json({ message: (err as Error).message });
+  }
+};
+
+export const changeUserEmail = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { email } = req.body;
+  try {
+    const updatedUser = await pool.query(
+      "UPDATE users SET email = $1 WHERE id = $2 RETURNING *",
+      [email, id]
+    );
+    io.emit("updateUser", updatedUser.rows[0]);
+    res.status(200).json(updatedUser.rows[0]);
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
   }

@@ -9,6 +9,11 @@ router
   .get("/users/get/:id", validateToken, userControllers.getUserById)
   .post("/users/create", userControllers.createUser)
   .post("/users/login", userControllers.loginUser)
+  .put(
+    "/users/update/email/:id",
+    validateToken,
+    userControllers.changeUserEmail
+  )
   .delete("/users/delete", validateToken, userControllers.deleteAllUsers)
   .delete("/users/delete/:id", validateToken, userControllers.deleteUserById);
 

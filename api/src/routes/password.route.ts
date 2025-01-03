@@ -11,6 +11,7 @@ router
     passwordControllers.createPasswordCategory
   )
   .post("/passwords/create", passwordControllers.createPassword)
+  .post("/passwords/create/key", passwordControllers.createPasswordKey)
   .delete(
     "/passwords/delete/:id",
     passwordControllers.deletePasswordFromCategory

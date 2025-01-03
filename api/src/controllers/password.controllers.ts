@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { idGen } from "../utils/idGen";
 import bcrypt from "bcrypt";
 import { Server } from "socket.io";
+import crypto from "crypto";
 
 const io = new Server();
 
@@ -142,5 +143,60 @@ export const createPasswordCategory = async (req: Request, res: Response) => {
     res.status(201).json(newCategory.rows[0]);
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
+  }
+};
+
+export const createPasswordKey = async (req: Request, res: Response) => {
+  try {
+    const {
+      length = 16,
+      includeUppercase = true,
+      includeLowercase = true,
+      includeNumbers = true,
+      includeSymbols = false,
+    } = req.body;
+
+    // Validaciones
+    if (length < 4 || length > 128) {
+      res.status(400).json({ error: "Length must be between 4 and 128." });
+      return;
+    }
+
+    if (
+      !includeUppercase &&
+      !includeLowercase &&
+      !includeNumbers &&
+      !includeSymbols
+    ) {
+      res
+        .status(400)
+        .json({ error: "At least one character type must be selected." });
+      return;
+    }
+
+    // Caracteres disponibles
+    const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+    const numberChars = "0123456789";
+    const symbolChars = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+    let characterPool = "";
+    if (includeUppercase) characterPool += uppercaseChars;
+    if (includeLowercase) characterPool += lowercaseChars;
+    if (includeNumbers) characterPool += numberChars;
+    if (includeSymbols) characterPool += symbolChars;
+
+    // Generación de la contraseña
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = crypto.randomInt(0, characterPool.length);
+      password += characterPool[randomIndex];
+    }
+
+    // Respuesta
+    res.status(200).json({ password });
+  } catch (error) {
+    console.error("Error generating password:", error);
+    res.status(500).json({ error: "Internal server error." });
   }
 };

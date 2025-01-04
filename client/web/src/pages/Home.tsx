@@ -1,5 +1,6 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import Layout from "../layouts/Layout";
+import LogoutButton from "../components/LogoutButton";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -7,13 +8,7 @@ const Home = () => {
     <Layout title="Home">
       <main>
         <h1>Home</h1>
-        <button
-          onClick={() => {
-            navigate("/auth");
-          }}
-        >
-          Auth
-        </button>
+        <LogoutButton />
       </main>
     </Layout>
   );

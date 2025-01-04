@@ -209,14 +209,12 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const validateToken = async (req: CustomRequest, res: Response) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token; // Accediendo al token desde la cookie
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     res.status(401).json({ message: "Access denied. No token provided." });
     return;
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     let decoded: JwtPayload | undefined;

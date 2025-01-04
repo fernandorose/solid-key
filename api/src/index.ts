@@ -27,7 +27,11 @@ io.on("connection", (socket) => {
 });
 
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173", // Solo permitir esta URL
+  credentials: true, // Permitir envío de cookies y headers de autenticación
+};
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", validateToken, passwordRoutes);

@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout";
 import { Button, Input } from "../components/styledComponents.style";
 import LoginButton from "../components/LoginButton";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -10,10 +11,13 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<object | null>(null);
 
+  const navigate = useNavigate();
+
   const handleSuccess = (data: { user: object; token: string }) => {
     setUser(data.user);
     setError(null);
     console.log("Token:", data.token);
+    navigate("/");
   };
 
   const handleError = (message: string) => {

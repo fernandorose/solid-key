@@ -1,0 +1,42 @@
+@font-face {
+  font-family: "Open Sauce Sans";
+  src: url("./fonts/OpenSauceSans-Regular.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Open Sauce Sans";
+  src: url("./fonts/OpenSauceSans-Bold.ttf");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Open Sauce Sans";
+  src: url("./fonts/OpenSauceSans-Medium.ttf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Open Sauce Sans";
+  src: url("./fonts/OpenSauceSans-ExtraBold.ttf");
+  font-weight: 800;
+}
+
+:root {
+  --default-font: "Open Sauce Sans", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--default-font);
+  font-size: 1rem;
+  font-weight: 400;
+}
+input {
+  font-family: inherit;
+}
+button {
+  cursor: pointer;
+}

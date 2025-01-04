@@ -23,7 +23,6 @@ const AuthRoute: React.FC<{ children: React.ReactElement }> = ({
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error("Error al validar el token:", error);
         setIsAuthenticated(false);
       }
     };

@@ -46,12 +46,10 @@ export const validateToken = (
     (req as CustomRequest).user = decoded;
     next();
   } catch (err) {
-    res
-      .status(403)
-      .json({
-        message: "Invalid or expired token.",
-        error: (err as Error).message,
-      });
+    res.status(403).json({
+      message: "Invalid or expired token.",
+      error: (err as Error).message,
+    });
   }
 };
 

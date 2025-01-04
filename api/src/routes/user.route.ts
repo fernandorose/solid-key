@@ -9,6 +9,7 @@ router
   .get("/users/get/:id", validateToken, userControllers.getUserById)
   .post("/users/create", userControllers.createUser)
   .post("/users/login", userControllers.loginUser)
+  .post("/users/validate-token", userControllers.validateToken)
   .put(
     "/users/update/email/:id",
     validateToken,

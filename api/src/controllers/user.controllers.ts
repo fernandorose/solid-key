@@ -1,18 +1,18 @@
 import pool from "../database/connection";
 import { Request, Response } from "express";
+import { idGen } from "../utils/idGen";
+import bcrypt from "bcrypt";
+import { Server } from "socket.io";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 interface CustomRequest extends Request {
-  user?: {
+  user?: JwtPayload & {
     role?: string;
   };
 }
-import { idGen } from "../utils/idGen";
-import bcrypt from "bcrypt";
-import { Server } from "socket.io";
-import jwt from "jsonwebtoken";
 
 const io = new Server();
 
@@ -188,6 +188,12 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const token = jwt.sign(payload, secret as string, { expiresIn });
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: expiresIn === "3h" ? 3 * 60 * 60 * 1000 : 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -199,6 +205,53 @@ export const loginUser = async (req: Request, res: Response) => {
     } else {
       res.status(500).json({ message: (err as Error).message });
     }
+  }
+};
+
+export const validateToken = async (req: CustomRequest, res: Response) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ message: "Access denied. No token provided." });
+    return;
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    let decoded: JwtPayload | undefined;
+
+    // Intentar descifrar con el primer secreto
+    try {
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET_USER as string
+      ) as JwtPayload;
+    } catch (err) {
+      // Si falla, intentar con el segundo secreto
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET_ADMIN as string
+      ) as JwtPayload;
+    }
+
+    // Si no se descifró correctamente, lanzar error
+    if (!decoded) {
+      throw new Error("Invalid token");
+    }
+
+    // Devolver la información del usuario si el token es válido
+    res.status(200).json({
+      success: true,
+      message: "Token is valid.",
+      user: decoded, // Información decodificada del token
+    });
+  } catch (err) {
+    res.status(403).json({
+      success: false,
+      message: "Invalid or expired token.",
+      error: (err as Error).message,
+    });
   }
 };
 

@@ -145,6 +145,29 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
+export const logoutUser = async (req: Request, res: Response) => {
+  try {
+    // Eliminar la cookie del token
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Asegúrate de usar cookies seguras en producción
+      sameSite: "strict", // Evitar el envío de cookies en solicitudes de terceros
+    });
+
+    // Enviar respuesta de éxito
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully.",
+    });
+  } catch (error) {
+    // Manejar errores
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while logging out.",
+    });
+  }
+};
+
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 

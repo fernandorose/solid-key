@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { Server } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { JWT_SECRET_ADMIN, JWT_SECRET_USER } from "../config/config";
 
 dotenv.config();
 
@@ -155,13 +156,13 @@ export const logoutUser = async (req: Request, res: Response) => {
     });
 
     // Enviar respuesta de éxito
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Logged out successfully.",
     });
   } catch (error) {
     // Manejar errores
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "An error occurred while logging out.",
     });
@@ -202,10 +203,7 @@ export const loginUser = async (req: Request, res: Response) => {
       role: user.role,
     };
 
-    const secret =
-      user.role === "admin"
-        ? process.env.JWT_SECRET_ADMIN
-        : process.env.JWT_SECRET_USER;
+    const secret = user.role === "admin" ? JWT_SECRET_ADMIN : JWT_SECRET_USER;
 
     const expiresIn = user.role === "admin" ? "3h" : "1h";
 
@@ -244,16 +242,10 @@ export const validateToken = async (req: CustomRequest, res: Response) => {
 
     // Intentar descifrar con el primer secreto
     try {
-      decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET_USER as string
-      ) as JwtPayload;
+      decoded = jwt.verify(token, JWT_SECRET_USER as string) as JwtPayload;
     } catch (err) {
       // Si falla, intentar con el segundo secreto
-      decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET_ADMIN as string
-      ) as JwtPayload;
+      decoded = jwt.verify(token, JWT_SECRET_ADMIN as string) as JwtPayload;
     }
 
     // Si no se descifró correctamente, lanzar error

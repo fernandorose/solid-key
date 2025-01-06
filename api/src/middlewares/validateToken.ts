@@ -11,14 +11,12 @@ export const validateToken = (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token; // Leer el token de la cookie
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     res.status(401).json({ message: "Access denied. No token provided." });
     return;
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     let decoded: JwtPayload | undefined;

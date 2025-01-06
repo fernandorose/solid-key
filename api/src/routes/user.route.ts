@@ -11,6 +11,7 @@ router
   .post("/users/login", userControllers.loginUser)
   .post("/users/validate-token", userControllers.validateToken)
   .post("/users/logout", userControllers.logoutUser)
+  .post("/users/decode-token", userControllers.decodeToken)
   .put(
     "/users/update/email/:id",
     validateToken,

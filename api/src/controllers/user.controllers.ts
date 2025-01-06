@@ -199,6 +199,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const payload = {
       id: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
     };
@@ -268,6 +269,41 @@ export const validateToken = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const decodeToken = async (req: Request, res: Response) => {
+  const token = req.cookies.token; // Obtener el token de las cookies
+
+  if (!token) {
+    res.status(401).json({ success: false, message: "No token provided." });
+  }
+
+  try {
+    let decoded: JwtPayload | undefined;
+
+    // Intentar descifrar con ambos secretos
+    try {
+      decoded = jwt.verify(token, JWT_SECRET_USER as string) as JwtPayload;
+    } catch (err) {
+      decoded = jwt.verify(token, JWT_SECRET_ADMIN as string) as JwtPayload;
+    }
+
+    // Si se descifra correctamente, devolver los datos
+    if (decoded) {
+      res.status(200).json({
+        success: true,
+        message: "Token decoded successfully.",
+        data: decoded,
+      });
+    } else {
+      throw new Error("Unable to decode token.");
+    }
+  } catch (err) {
+    res.status(403).json({
+      success: false,
+      message: "Invalid or expired token.",
+      error: (err as Error).message,
+    });
+  }
+};
 export const changeUserEmail = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { email } = req.body;

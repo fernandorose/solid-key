@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthRoute from "./components/AuthRoute";
+import { UserProvider } from "./components/UserProvider";
 
 const App = () => {
   return (
@@ -20,9 +21,11 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
+              <UserProvider>
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              </UserProvider>
             }
           />
         </Routes>

@@ -34,6 +34,6 @@ export const Logout = styled.button`
   border: 1px solid var(--alert-color);
   border-radius: 5px;
   transition: 300ms;
-  font-family: var(--mono-font-2);
+  font-family: var(--mono-font);
   font-size: 0.85rem;
 `;

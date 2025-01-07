@@ -20,12 +20,18 @@ importers:
       '@fontsource-variable/jetbrains-mono':
         specifier: ^5.1.1
         version: 5.1.1
+      '@fontsource-variable/roboto-condensed':
+        specifier: ^5.1.1
+        version: 5.1.1
       axios:
         specifier: ^1.7.9
         version: 1.7.9
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      jwt-decode:
+        specifier: ^4.0.0
+        version: 4.0.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -344,6 +350,9 @@ packages:
 
   '@fontsource-variable/jetbrains-mono@5.1.1':
     resolution: {integrity: sha512-V+1aRFRvuZ66PpO30s8l/2aADKzpV9VRsO3kSZE+rTMvi4vab3cUcPHMN2z+wAvjkYJO71Yf+g3/Y6pSMmQpVQ==}
+
+  '@fontsource-variable/roboto-condensed@5.1.1':
+    resolution: {integrity: sha512-FCdzPL6zevODCQFOGY/tuo2SbJeIUq4bSlXdI3ttuDVetTm5sHUf0Ei9raMdMR1AE2IJFgoQEAbxXSz8zv1oiA==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -969,6 +978,10 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -1531,6 +1544,8 @@ snapshots:
   '@fontsource-variable/inter@5.1.0': {}
 
   '@fontsource-variable/jetbrains-mono@5.1.1': {}
+
+  '@fontsource-variable/roboto-condensed@5.1.1': {}
 
   '@humanfs/core@0.19.1': {}
 
@@ -2119,6 +2134,8 @@ snapshots:
   json-schema-traverse@0.4.1: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
+
+  jwt-decode@4.0.0: {}
 
   keyv@4.5.4:
     dependencies:

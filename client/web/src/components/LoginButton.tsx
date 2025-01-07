@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Button } from "./styledComponents.style";
+import { Button } from "../styles/styledComponents.style";
 
 interface LoginButtonProps {
   email: string;

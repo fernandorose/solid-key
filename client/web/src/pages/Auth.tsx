@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import Layout from "../layouts/Layout";
-import { Button, Input } from "../components/styledComponents.style";
+import { Button, Input } from "../styles/styledComponents.style";
 import LoginButton from "../components/LoginButton";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +47,7 @@ const Auth = () => {
             }
             div {
               text-align: center;
-              padding-block: 50px;
+              padding-bottom: 50px;
               animation: fadeIn 1s ease;
               h1 {
                 font-weight: 800;
@@ -91,10 +91,12 @@ const Auth = () => {
               p {
                 font-size: 0.8rem;
                 span {
-                  font-size: 0.8rem;
+                  font-size: 0.9rem;
                   color: #0e7556;
-
+                  text-decoration: underline;
                   cursor: pointer;
+                  font-family: var(--mono-font-2);
+                  font-weight: 800;
                 }
               }
               article {
@@ -131,7 +133,16 @@ const Auth = () => {
               onSuccess={handleSuccess}
               onError={handleError}
             />
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && (
+              <p
+                className={css`
+                  color: var(--alert-color);
+                  text-align: center;
+                `}
+              >
+                {error}
+              </p>
+            )}
             <p>
               You don't have an account yet? <span>Create one here</span>
             </p>

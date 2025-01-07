@@ -1,14 +1,24 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Layout from "../layouts/Layout";
-import LogoutButton from "../components/LogoutButton";
+import { css } from "@emotion/css";
+import UserDataToolTip from "../components/UserDataToolTip";
+import NavBar from "../components/NavBar";
 
-const Home = () => {
-  const navigate = useNavigate();
+const Home: React.FC = () => {
   return (
     <Layout title="Home">
-      <main>
-        <h1>Home</h1>
-        <LogoutButton />
+      <main
+        className={css`
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          padding: 20px;
+          height: 100dvh;
+        `}
+      >
+        <NavBar />
+        <UserDataToolTip />
       </main>
     </Layout>
   );

@@ -1,11 +1,11 @@
-import pool from "../database/connection";
-import { Request, Response } from "express";
-import { idGen } from "../utils/idGen";
-import bcrypt from "bcrypt";
-import { Server } from "socket.io";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import * as dotenv from "dotenv";
-import { JWT_SECRET_ADMIN, JWT_SECRET_USER } from "../config/config";
+import pool from '../database/connection';
+import { Request, Response } from 'express';
+import { idGen } from '../utils/idGen';
+import bcrypt from 'bcrypt';
+import { Server } from 'socket.io';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
+import { JWT_SECRET_ADMIN, JWT_SECRET_USER } from '../config/config';
 
 dotenv.config();
 
@@ -115,7 +115,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
     userMap.forEach((value) => {
       // Separar los usuarios según su rol
-      if (value.role === "admin") {
+      if (value.role === 'admin') {
         adminUsers.push(value);
       } else {
         regularUsers.push(value);
@@ -167,7 +167,7 @@ export const getUserById = async (req: Request, res: Response) => {
     );
 
     if (userData.rows.length === 0) {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      res.status(404).json({ message: 'Usuario no encontrado' });
       return;
     }
 
@@ -238,14 +238,14 @@ export const createUser = async (req: Request, res: Response) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Valida el rol proporcionado o asigna uno por defecto
-  const userRole = role && ["user", "admin"].includes(role) ? role : "user";
+  const userRole = role && ['user', 'admin'].includes(role) ? role : 'user';
 
   try {
     const newUser = await pool.query(
-      "INSERT INTO users (id, name, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      'INSERT INTO users (id, name, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [id, name, email, hashedPassword, userRole]
     );
-    io.emit("newUser", newUser.rows[0]);
+    io.emit('newUser', newUser.rows[0]);
     res.status(201).json(newUser.rows[0]);
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
@@ -255,22 +255,22 @@ export const createUser = async (req: Request, res: Response) => {
 export const logoutUser = async (req: Request, res: Response) => {
   try {
     // Eliminar la cookie del token
-    res.clearCookie("token", {
+    res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Asegúrate de usar cookies seguras en producción
-      sameSite: "strict", // Evitar el envío de cookies en solicitudes de terceros
+      secure: process.env.NODE_ENV === 'production', // Asegúrate de usar cookies seguras en producción
+      sameSite: 'strict', // Evitar el envío de cookies en solicitudes de terceros
     });
 
     // Enviar respuesta de éxito
     res.status(200).json({
       success: true,
-      message: "Logged out successfully.",
+      message: 'Logged out successfully.',
     });
   } catch (error) {
     // Manejar errores
     res.status(500).json({
       success: false,
-      message: "An error occurred while logging out.",
+      message: 'An error occurred while logging out.',
     });
   }
 };
@@ -279,17 +279,17 @@ export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({ message: "Email and password are required" });
+    res.status(400).json({ message: 'Email and password are required' });
     return;
   }
 
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [
       email,
     ]);
 
     if (result.rows.length === 0) {
-      res.status(401).json({ message: "Invalid credentials" });
+      res.status(401).json({ message: 'Invalid credentials' });
       return;
     }
 
@@ -297,7 +297,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid credentials" });
+      res.status(401).json({ message: 'Invalid credentials' });
       return;
     }
 
@@ -310,33 +310,33 @@ export const loginUser = async (req: Request, res: Response) => {
       role: user.role,
     };
 
-    const secret = user.role === "admin" ? JWT_SECRET_ADMIN : JWT_SECRET_USER;
+    const secret = user.role === 'admin' ? JWT_SECRET_ADMIN : JWT_SECRET_USER;
 
-    const expiresIn = user.role === "admin" ? "3h" : "1h";
+    const expiresIn = user.role === 'admin' ? '3h' : '1h';
 
     const token = jwt.sign(payload, secret as string, { expiresIn });
 
     // Actualizar el campo last_login con la fecha y hora actuales
     const now = new Date();
-    await pool.query("UPDATE users SET last_login = $1 WHERE id = $2", [
+    await pool.query('UPDATE users SET last_login = $1 WHERE id = $2', [
       now,
       user.id,
     ]);
 
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true,
-      sameSite: "strict",
-      maxAge: expiresIn === "3h" ? 3 * 60 * 60 * 1000 : 60 * 60 * 1000,
+      sameSite: 'strict',
+      maxAge: expiresIn === '3h' ? 3 * 60 * 60 * 1000 : 60 * 60 * 1000,
     });
 
     res.status(200).json({
       success: true,
-      message: "Login successful",
+      message: 'Login successful',
       data: { user: userWithoutPassword, token },
     });
   } catch (err) {
-    if (process.env.NODE_ENV === "production") {
-      res.status(500).json({ message: "Internal server error" });
+    if (process.env.NODE_ENV === 'production') {
+      res.status(500).json({ message: 'Internal server error' });
     } else {
       res.status(500).json({ message: (err as Error).message });
     }
@@ -347,46 +347,52 @@ export const validateToken = async (req: CustomRequest, res: Response) => {
   const token = req.cookies.token; // Accediendo al token desde la cookie
 
   if (!token) {
-    res.status(401).json({ message: "Access denied. No token provided." });
+    res.status(401).json({ message: 'Access denied. No token provided.' });
     return;
   }
 
+  let decoded: JwtPayload | undefined;
+
   try {
-    let decoded: JwtPayload | undefined;
-
     // Intentar descifrar con el primer secreto
+    decoded = jwt.verify(token, JWT_SECRET_USER as string) as JwtPayload;
+  } catch (errUser) {
     try {
-      decoded = jwt.verify(token, JWT_SECRET_USER as string) as JwtPayload;
-    } catch (err) {
-      // Si falla, intentar con el segundo secreto
+      // Intentar descifrar con el segundo secreto
       decoded = jwt.verify(token, JWT_SECRET_ADMIN as string) as JwtPayload;
+    } catch (errAdmin) {
+      // Si ambos intentos fallan, responder con error
+      res.status(403).json({
+        success: false,
+        message: 'Invalid or expired token.',
+        error: 'Token could not be verified.',
+      });
+      return;
     }
+  }
 
-    // Si no se descifró correctamente, lanzar error
-    if (!decoded) {
-      throw new Error("Invalid token");
-    }
-
-    // Devolver la información del usuario si el token es válido
+  // Si el token es válido, devolver la información
+  if (decoded) {
     res.status(200).json({
       success: true,
-      message: "Token is valid.",
+      message: 'Token is valid.',
       user: decoded, // Información decodificada del token
     });
-  } catch (err) {
-    res.status(403).json({
-      success: false,
-      message: "Invalid or expired token.",
-      error: (err as Error).message,
-    });
+    return;
   }
+
+  // En caso de algún error inesperado
+  res.status(500).json({
+    success: false,
+    message: 'An unexpected error occurred.',
+  });
 };
 
 export const decodeToken = async (req: Request, res: Response) => {
   const token = req.cookies.token; // Obtener el token de las cookies
 
   if (!token) {
-    res.status(401).json({ success: false, message: "No token provided." });
+    res.status(401).json({ success: false, message: 'No token provided.' });
   }
 
   try {
@@ -403,16 +409,16 @@ export const decodeToken = async (req: Request, res: Response) => {
     if (decoded) {
       res.status(200).json({
         success: true,
-        message: "Token decoded successfully.",
+        message: 'Token decoded successfully.',
         data: decoded,
       });
     } else {
-      throw new Error("Unable to decode token.");
+      throw new Error('Unable to decode token.');
     }
   } catch (err) {
     res.status(403).json({
       success: false,
-      message: "Invalid or expired token.",
+      message: 'Invalid or expired token.',
       error: (err as Error).message,
     });
   }
@@ -422,10 +428,10 @@ export const changeUserEmail = async (req: Request, res: Response) => {
   const { email } = req.body;
   try {
     const updatedUser = await pool.query(
-      "UPDATE users SET email = $1 WHERE id = $2 RETURNING *",
+      'UPDATE users SET email = $1 WHERE id = $2 RETURNING *',
       [email, id]
     );
-    io.emit("updateUser", updatedUser.rows[0]);
+    io.emit('updateUser', updatedUser.rows[0]);
     res.status(200).json(updatedUser.rows[0]);
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
@@ -445,9 +451,9 @@ export const changeUserEmail = async (req: Request, res: Response) => {
 export const deleteUserById = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
-    await pool.query("DELETE FROM users WHERE id = $1", [id]);
-    io.emit("deleteUser", id);
-    res.status(200).json({ message: "User deleted successfully" });
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    io.emit('deleteUser', id);
+    res.status(200).json({ message: 'User deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
   }
@@ -455,9 +461,9 @@ export const deleteUserById = async (req: Request, res: Response) => {
 
 export const deleteAllUsers = async (req: Request, res: Response) => {
   try {
-    await pool.query("DELETE FROM users");
-    io.emit("deleteAllUsers");
-    res.status(200).json({ message: "All users deleted successfully" });
+    await pool.query('DELETE FROM users');
+    io.emit('deleteAllUsers');
+    res.status(200).json({ message: 'All users deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
   }

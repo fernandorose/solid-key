@@ -23,6 +23,9 @@ importers:
       '@fontsource-variable/roboto-condensed':
         specifier: ^5.1.1
         version: 5.1.1
+      '@fontsource/fira-sans':
+        specifier: ^5.1.1
+        version: 5.1.1
       axios:
         specifier: ^1.7.9
         version: 1.7.9
@@ -59,7 +62,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react-swc':
         specifier: ^3.5.0
-        version: 3.7.2(vite@6.0.5)
+        version: 3.7.2(@swc/helpers@0.5.15)(vite@6.0.5)
       eslint:
         specifier: ^9.17.0
         version: 9.17.0
@@ -354,6 +357,9 @@ packages:
   '@fontsource-variable/roboto-condensed@5.1.1':
     resolution: {integrity: sha512-FCdzPL6zevODCQFOGY/tuo2SbJeIUq4bSlXdI3ttuDVetTm5sHUf0Ei9raMdMR1AE2IJFgoQEAbxXSz8zv1oiA==}
 
+  '@fontsource/fira-sans@5.1.1':
+    resolution: {integrity: sha512-LdbPwcMEADFjbcMx5sdPcyLi0NnEzP34YO+4d2eOeIKjCu1SyJiG/bBz5K07qm4pyhh2cQveifhFrG7gQDG9wQ==}
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -570,6 +576,9 @@ packages:
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
+
+  '@swc/helpers@0.5.15':
+    resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
 
   '@swc/types@0.1.17':
     resolution: {integrity: sha512-V5gRru+aD8YVyCOMAjMpWR1Ui577DD5KSJsHP8RAxopAH22jFz6GZd/qxqjO6MJHQhcsjvjOFXyDhyLQUnMveQ==}
@@ -1227,6 +1236,9 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   turbo-stream@2.4.0:
     resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
@@ -1547,6 +1559,8 @@ snapshots:
 
   '@fontsource-variable/roboto-condensed@5.1.1': {}
 
+  '@fontsource/fira-sans@5.1.1': {}
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -1676,7 +1690,7 @@ snapshots:
   '@swc/core-win32-x64-msvc@1.10.1':
     optional: true
 
-  '@swc/core@1.10.1':
+  '@swc/core@1.10.1(@swc/helpers@0.5.15)':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.17
@@ -1691,8 +1705,14 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.10.1
       '@swc/core-win32-ia32-msvc': 1.10.1
       '@swc/core-win32-x64-msvc': 1.10.1
+      '@swc/helpers': 0.5.15
 
   '@swc/counter@0.1.3': {}
+
+  '@swc/helpers@0.5.15':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
 
   '@swc/types@0.1.17':
     dependencies:
@@ -1796,9 +1816,9 @@ snapshots:
       '@typescript-eslint/types': 8.18.2
       eslint-visitor-keys: 4.2.0
 
-  '@vitejs/plugin-react-swc@3.7.2(vite@6.0.5)':
+  '@vitejs/plugin-react-swc@3.7.2(@swc/helpers@0.5.15)(vite@6.0.5)':
     dependencies:
-      '@swc/core': 1.10.1
+      '@swc/core': 1.10.1(@swc/helpers@0.5.15)
       vite: 6.0.5
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -2373,6 +2393,9 @@ snapshots:
       typescript: 5.6.3
 
   tslib@2.6.2: {}
+
+  tslib@2.8.1:
+    optional: true
 
   turbo-stream@2.4.0: {}
 

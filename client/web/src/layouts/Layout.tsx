@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 interface LayoutProps {
   title: string;
@@ -7,8 +7,8 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ title, children }) => {
   useEffect(() => {
-    document.title = "SolidKey | " + title; // Cambia el título de la página
-  }, [title]); // Se ejecuta cuando el título cambia
+    document.title = 'SolidKey | ' + title;
+  }, [title]);
 
   return <>{children}</>;
 };

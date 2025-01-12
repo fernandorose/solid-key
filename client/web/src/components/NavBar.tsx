@@ -1,8 +1,6 @@
-import { css } from "@emotion/css";
-import UserDataToolTip from "./UserDataToolTip";
-import { useState, useRef } from "react";
-import { useUser } from "./UserProvider";
-import Logo from "./Logo";
+import { css } from '@emotion/css';
+import Logo from './Logo';
+import UserData from './UserData';
 
 const NavBar: React.FC = () => {
   return (
@@ -10,17 +8,20 @@ const NavBar: React.FC = () => {
       className={css`
         display: flex;
         height: 100%;
-        position: relative; /* Necesario para posicionar el tooltip */
+        width: 250px;
+        position: relative;
+        box-shadow: 0 0 20px rgb(0, 0, 0, 0.5);
         nav {
+          position: relative;
+
+          border-radius: inherit;
           display: flex;
           flex-direction: column;
           height: 100%;
-          border: solid 1px black;
-          border-radius: 5px;
-          width: 250px;
-          background: #000;
+          width: 100%;
+          background: #21252b;
           color: #fff;
-          padding: 20px;
+          padding: 10px;
           ul {
             display: flex;
             width: 100%;
@@ -39,17 +40,29 @@ const NavBar: React.FC = () => {
               display: flex;
               justify-content: space-between;
               align-items: end;
-
+              width: 100%;
               span {
                 font-family: var(--mono-font);
                 font-size: 0.7rem;
-                font-weight: bold;
               }
             `}
           >
-            <Logo />
+            <img
+              className={css`
+                width: 100px;
+              `}
+              src="/logo.svg"
+              alt=""
+            />
             <span>v1.0</span>
           </div>
+        </ul>
+        <ul
+          className={css`
+            margin-top: auto;
+          `}
+        >
+          <UserData />
         </ul>
       </nav>
     </main>

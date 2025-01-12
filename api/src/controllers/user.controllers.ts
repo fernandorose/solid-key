@@ -255,7 +255,7 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const newUser = await pool.query(
       'INSERT INTO users (id, name, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [id, name, email, hashedPassword, userRole]
+      [id, value.name, value.email, hashedPassword, value.role]
     );
     io.emit('newUser', newUser.rows[0]);
     res.status(201).json(newUser.rows[0]);

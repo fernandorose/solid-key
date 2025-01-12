@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { JWT_SECRET_ADMIN, JWT_SECRET_USER } from '../config/config';
+import Joi from 'joi';
 
 dotenv.config();
 
@@ -232,11 +233,22 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
+const userSchema = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  role: Joi.string().valid('user', 'admin').default('user'),
+});
+
 export const createUser = async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body; // Incluye `role` en los datos del cuerpo
   const id = idGen();
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const { error, value } = userSchema.validate(
+    { name, email, password, role },
+    { abortEarly: false }
+  );
   // Valida el rol proporcionado o asigna uno por defecto
   const userRole = role && ['user', 'admin'].includes(role) ? role : 'user';
 

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Button } from "../styles/styledComponents.style";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Button } from '../styles/StyledComponents.style';
 
 interface LoginButtonProps {
   email: string;
@@ -19,7 +19,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({
 
   const handleLogin = async () => {
     if (!email || !password) {
-      onError("Email and password are required.");
+      onError('Email and password are required.');
       return;
     }
 
@@ -27,7 +27,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/users/login",
+        'http://localhost:3000/api/v1/users/login',
         { email, password },
         { withCredentials: true }
       );
@@ -35,13 +35,13 @@ const LoginButton: React.FC<LoginButtonProps> = ({
       if (response.data.success) {
         onSuccess(response.data.data);
       } else {
-        onError(response.data.message || "Login failed.");
+        onError(response.data.message || 'Login failed.');
       }
     } catch (error) {
       const errorMessage =
         axios.isAxiosError(error) && error.response
           ? error.response.data.message
-          : "An error occurred.";
+          : 'An error occurred.';
 
       onError(errorMessage);
     } finally {
@@ -51,7 +51,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({
 
   return (
     <Button onClick={handleLogin} disabled={isLoading}>
-      {isLoading ? "Logging in..." : "Log in"}
+      {isLoading ? 'Logging in...' : 'Log in'}
     </Button>
   );
 };

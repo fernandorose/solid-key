@@ -1,7 +1,7 @@
-import React from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Button, Logout } from "../styles/styledComponents.style";
+import React from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Button, Logout } from '../styles/StyledComponents.style';
 
 const LogoutButton: React.FC = () => {
   const navigate = useNavigate();
@@ -18,14 +18,14 @@ const LogoutButton: React.FC = () => {
       // Verifica si la respuesta es exitosa
       if (response.data.success) {
         // Redirigir al usuario a la página de login
-        navigate("/auth");
+        navigate('/auth');
       } else {
-        console.error("Error al cerrar sesión:", response.data.message);
-        alert("Hubo un error al cerrar sesión. Por favor, inténtalo de nuevo.");
+        console.error('Error al cerrar sesión:', response.data.message);
+        alert('Hubo un error al cerrar sesión. Por favor, inténtalo de nuevo.');
       }
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      alert("Hubo un error al cerrar sesión. Por favor, inténtalo de nuevo.");
+      console.error('Error al cerrar sesión:', error);
+      alert('Hubo un error al cerrar sesión. Por favor, inténtalo de nuevo.');
     }
   };
 

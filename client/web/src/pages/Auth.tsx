@@ -1,13 +1,14 @@
-import { css } from "@emotion/css";
-import Layout from "../layouts/Layout";
-import { Button, Input } from "../styles/styledComponents.style";
-import LoginButton from "../components/LoginButton";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { css } from '@emotion/css';
+import Layout from '../layouts/Layout';
+import { Input } from '../styles/StyledComponents.style';
+import LoginButton from '../components/LoginButton';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Logo from '../components/Logo';
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<object | null>(null);
 
@@ -16,8 +17,8 @@ const Auth = () => {
   const handleSuccess = (data: { user: object; token: string }) => {
     setUser(data.user);
     setError(null);
-    console.log("Token:", data.token);
-    navigate("/");
+    console.log('Token:', data.token);
+    navigate('/');
   };
 
   const handleError = (message: string) => {
@@ -30,6 +31,9 @@ const Auth = () => {
           display: flex;
           width: 100%;
           height: 100dvh;
+          justify-content: center;
+          align-items: center;
+          padding: 30px;
         `}
       >
         <section
@@ -38,10 +42,10 @@ const Auth = () => {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 500px;
-            height: 100dvh;
-            border-right: solid 1px #00000011;
-            padding: 20px;
+            width: 400px;
+            height: 100%;
+            border: solid 1px #00000011;
+
             section {
               animation: fadeIn 0.7s ease;
             }
@@ -79,7 +83,7 @@ const Auth = () => {
           `}
         >
           <div>
-            <h1>SolidKey</h1>
+            <Logo />
             <p>Innovative and Solid solution for managing</p>
             <p>your passwords with ease and security.</p>
           </div>
@@ -91,12 +95,10 @@ const Auth = () => {
               p {
                 font-size: 0.8rem;
                 span {
-                  font-size: 0.9rem;
                   color: #0e7556;
                   text-decoration: underline;
                   cursor: pointer;
-                  font-family: var(--mono-font-2);
-                  font-weight: 800;
+                  font-family: var(--mono-font);
                 }
               }
               article {
@@ -104,7 +106,6 @@ const Auth = () => {
                 display: flex;
                 flex-direction: column;
                 p {
-                  font-weight: 700;
                 }
               }
             `}
@@ -147,39 +148,6 @@ const Auth = () => {
               You don't have an account yet? <span>Create one here</span>
             </p>
           </section>
-        </section>
-
-        <section
-          className={css`
-            width: 100%;
-            height: 100vh;
-            @media (max-width: 1024px) {
-              display: none;
-            }
-          `}
-        >
-          <div
-            className={css`
-              position: relative;
-              width: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              background: url("/auth2.webp");
-              background-size: cover;
-              border-radius: 50px;
-              &::after {
-                content: "";
-                width: 100%;
-                height: 100%;
-                inset: 0;
-                position: absolute;
-                background: inherit;
-                filter: blur(50px) saturate(400%);
-                z-index: -1;
-              }
-            `}
-          ></div>
         </section>
       </main>
     </Layout>

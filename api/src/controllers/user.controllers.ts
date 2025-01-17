@@ -450,16 +450,6 @@ export const changeUserEmail = async (req: Request, res: Response) => {
   }
 };
 
-// export const getUserById = async (req: Request, res: Response) => {
-//   const id = req.params.id;
-//   try {
-//     const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-//     res.status(200).json({ user: user.rows[0] });
-//   } catch (err) {
-//     res.status(500).json({ message: (err as Error).message });
-//   }
-// };
-
 export const deleteUserById = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {

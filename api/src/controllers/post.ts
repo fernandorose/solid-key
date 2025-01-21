@@ -48,7 +48,7 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-export const logoutUser = async (req: Request, res: Response) => {
+export const logoutUser = async (req: Request, res: Response): Promise<any> => {
   try {
     res.clearCookie('token', {
       httpOnly: true,
@@ -56,23 +56,23 @@ export const logoutUser = async (req: Request, res: Response) => {
       sameSite: 'strict',
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Logged out successfully.',
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'An error occurred while logging out.',
     });
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response): Promise<any> => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({ message: 'Email and password are required' });
+    return res.status(400).json({ message: 'Email and password are required' });
     return;
   }
 
@@ -82,16 +82,14 @@ export const loginUser = async (req: Request, res: Response) => {
     ]);
 
     if (result.rows.length === 0) {
-      res.status(401).json({ message: 'Invalid credentials' });
-      return;
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const user = result.rows[0];
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: 'Invalid credentials' });
-      return;
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const { password: _, ...userWithoutPassword } = user;
@@ -121,26 +119,30 @@ export const loginUser = async (req: Request, res: Response) => {
       maxAge: expiresIn === '3h' ? 3 * 60 * 60 * 1000 : 60 * 60 * 1000,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Login successful',
       data: { user: userWithoutPassword, token },
     });
   } catch (err) {
     if (process.env.NODE_ENV === 'production') {
-      res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ message: 'Internal server error' });
     } else {
-      res.status(500).json({ message: (err as Error).message });
+      return res.status(500).json({ message: (err as Error).message });
     }
   }
 };
 
-export const validateToken = async (req: CustomRequest, res: Response) => {
+export const validateToken = async (
+  req: CustomRequest,
+  res: Response
+): Promise<any> => {
   const token = req.cookies.token;
 
   if (!token) {
-    res.status(401).json({ message: 'Access denied. No token provided.' });
-    return;
+    return res
+      .status(401)
+      .json({ message: 'Access denied. No token provided.' });
   }
 
   let decoded: JwtPayload | undefined;
@@ -151,7 +153,7 @@ export const validateToken = async (req: CustomRequest, res: Response) => {
     try {
       decoded = jwt.verify(token, JWT_SECRET_ADMIN as string) as JwtPayload;
     } catch (errAdmin) {
-      res.status(403).json({
+      return res.status(403).json({
         success: false,
         message: 'Invalid or expired token.',
         error: 'Token could not be verified.',
@@ -175,11 +177,16 @@ export const validateToken = async (req: CustomRequest, res: Response) => {
   });
 };
 
-export const decodeToken = async (req: Request, res: Response) => {
+export const decodeToken = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
   const token = req.cookies.token;
 
   if (!token) {
-    res.status(401).json({ success: false, message: 'No token provided.' });
+    return res
+      .status(401)
+      .json({ success: false, message: 'No token provided.' });
   }
 
   try {
@@ -192,7 +199,7 @@ export const decodeToken = async (req: Request, res: Response) => {
     }
 
     if (decoded) {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: 'Token decoded successfully.',
         data: decoded,
@@ -201,7 +208,7 @@ export const decodeToken = async (req: Request, res: Response) => {
       throw new Error('Unable to decode token.');
     }
   } catch (err) {
-    res.status(403).json({
+    return res.status(403).json({
       success: false,
       message: 'Invalid or expired token.',
       error: (err as Error).message,

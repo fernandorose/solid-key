@@ -1,3 +1,18 @@
 <main>
-  <h1>Hello World</h1>
+  <h1>Login</h1>
+  <form action="" [formGroup]="loginForm">
+    <input
+      type="email"
+      placeholder="Email"
+      name="email"
+      formControlName="email"
+    />
+    <input
+      type="password"
+      placeholder="Password"
+      name="password"
+      formControlName="password"
+    />
+    <button (click)="onSubmit()">Login</button>
+  </form>
 </main>
